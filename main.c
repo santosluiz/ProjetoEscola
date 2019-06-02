@@ -1,9 +1,25 @@
 #include <stdio.h>
 #include <stdlib.h>
+#define CADASTRO_ALUNO_TAM 5
+
+/* Struct Aluno */
+typedef struct alunoDados{
+    int matricula;
+    char nome[50];
+    int sexo; //1 - Mulher | 2 - Homem
+    char dataNascimento[10];
+    char cpf[11];
+}Aluno;
 
 int main()
 {
+    //Variáveis do menu
     int escolha, escolhaSubMenu, sair = 0;
+
+    //Variáveis do cadastro de Aluno
+    Aluno alunoLista[CADASTRO_ALUNO_TAM];
+    int qtdAlunos = 0;
+
 
     while(!sair){
 
@@ -19,7 +35,8 @@ int main()
 
             case 1:
                 system("clear");
-                menuAlunos();
+                menuAlunos(alunoLista, qtdAlunos);
+                qtdAlunos++;
                 break;
 
             case 2:
@@ -82,9 +99,9 @@ int switchAlunos(){
     return escolhaAluno;
 }
 
-int menuAlunos(){
+int menuAlunos(Aluno alunoLista[], int qtdAlunos){
 
-    int escolhaSubMenu, sair = 0;
+    int escolhaSubMenu, tipoCadastro = 0, sair = 0;
 
     while(!sair){
     escolhaSubMenu = switchAlunos();
@@ -99,16 +116,19 @@ int menuAlunos(){
         case 1:
             system("clear");
             printf("Você entrou em cadastro de alunos");
+            cadastrarPessoa(alunoLista, qtdAlunos, tipoCadastro);
             break;
 
         case 2:
             system("clear");
             printf("Você entrou em atualizar alunos");
+            //atualizarPessoa();
             break;
 
         case 3:
             system("clear");
             printf("Você entrou em exclurir alunos");
+            //excluirPessoa();
             break;
 
         default:
@@ -117,4 +137,40 @@ int menuAlunos(){
             break;
         }
     }
+}
+
+void cadastrarPessoa(Aluno alunoLista[], int qtdAlunos, int tipoCadastro){
+
+    //Tipo 0 - Aluno | 1 - Professor
+
+    if(tipoCadastro == 0){
+        printf("\ --- Cadastro de Aluno --- /\n\n");
+
+        printf("Insira a matrícula: ");
+        scanf("%d", &alunoLista[qtdAlunos].matricula);
+        getchar();
+
+        printf("Insira o nome: ");
+        fflush(stdin);
+        fgets(alunoLista[qtdAlunos].nome, 50, stdin);
+
+        printf("Insira o sexo: (1: Mulher | 2: Homem) ");
+        scanf("%d", &alunoLista[qtdAlunos].sexo);
+        getchar();
+
+        printf("Insira a data de nascimento: (Formato: DD/MM/AAAA) ");
+        fflush(stdin);
+        fgets(alunoLista[qtdAlunos].dataNascimento, 10, stdin);
+
+        printf("Insira o cpf: (Formato: XXXXXXXXXXX) ");
+        fflush(stdin);
+        fgets(alunoLista[qtdAlunos].cpf, 11, stdin);
+
+        system("clear");
+    }
+}
+
+
+
+
 }
