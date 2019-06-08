@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #define CADASTRO_PROFESSOR_TAM 2
-#define CADASTRO_ALUNO_TAM 5
+#define CADASTRO_ALUNO_TAM 3
 #define QUANTIDADE_DISCIPLINAS 5
 #define ALUNOS_POR_DISCIPLINA 3
 
@@ -28,17 +28,20 @@ typedef struct disciplinaDados{
     char nome[50];
     int codigo;
     int semestre;
-    int professor[50];
+    int matriculaProfessor;
     int alunosNaDisciplina[ALUNOS_POR_DISCIPLINA];
 }Disciplina;
 
 int opcoesMenu();
-int menuAlunos(Aluno alunoLista[], Professor professorLista[], int qtdAlunos, int qtdProfessores);
-int menuProfessores(Aluno alunoLista[], Professor professorLista[], int qtdAlunos, int qtdProfessores);
-int menuDisciplinas(Disciplina disciplinaLista[], Aluno alunoLista[], Professor professorLista[], int qtdDisciplinas, int qtdAlunos, int qtdProfessores);
+int menuAlunos(Aluno alunoLista[], Professor professorLista[], int *qtdAlunosPTR, int *qtdProfessoresPTR);
+int menuProfessores(Aluno alunoLista[], Professor professorLista[], int *qtdAlunosPTR, int *qtdProfessoresPTR);
+int menuDisciplinas(Disciplina disciplinaLista[], Aluno alunoLista[], Professor professorLista[], int *qtdDisciplinasPTR, int *qtdAlunosPTR, int *qtdProfessoresPTR);
 int switchPessoaDisciplina(int tipoItem);
-void cadastrarPessoa(Aluno alunoLista[], Professor professorLista[], int qtdAlunos, int qtdProfessores, int tipoCadastro);
-void cadastrarDisciplina(Disciplina disciplinaLista[], Professor professorLista[], int qtdProfessores, int qtdDisciplinas);
+void cadastrarPessoa(Aluno alunoLista[], Professor professorLista[], int *qtdAlunosPTR, int *qtdProfessoresPTR, int tipoCadastro);
+void cadastrarDisciplina(Disciplina disciplinaLista[], Professor professorLista[], int *qtdProfessoresPTR, int *qtdDisciplinasPTR);
+void exibirAlunos(Aluno alunoLista[], int *qtdAlunosPTR);
+void exibirProfessor(Professor professorLista[], int *qtdProfessoresPTR);
+
 
 int main()
 {
@@ -55,8 +58,19 @@ int main()
     int qtdProfessores = 0;
     int qtdDisciplinas = 0;
 
+    int *qtdAlunosPTR;
+    int *qtdProfessoresPTR;
+    int *qtdDisciplinasPTR;
+
+
+    qtdAlunosPTR = &qtdAlunos;
+    qtdProfessoresPTR = &qtdProfessores;
+    qtdDisciplinasPTR = &qtdDisciplinas;
+
 
     while(!sair){
+
+    printf("qtdALunos ---> %d\n\n", *qtdAlunosPTR);
 
     escolha = opcoesMenu();
 
@@ -70,19 +84,18 @@ int main()
 
             case 1:
                 system("clear");
-                menuAlunos(alunoLista, professorLista, qtdAlunos, qtdProfessores);
-                qtdAlunos++;
+                menuAlunos(alunoLista, professorLista, qtdAlunosPTR, qtdProfessoresPTR);
                 break;
 
             case 2:
                 system("clear");
-                menuProfessores(alunoLista, professorLista, qtdAlunos, qtdProfessores);
+                menuProfessores(alunoLista, professorLista, qtdAlunosPTR, qtdProfessoresPTR);
                 qtdProfessores++;
                 break;
 
             case 3:
                 system("clear");
-                menuDisciplinas(disciplinaLista, alunoLista, professorLista, qtdDisciplinas, qtdAlunos, qtdProfessores);
+                menuDisciplinas(disciplinaLista, alunoLista, professorLista, qtdDisciplinasPTR, qtdAlunosPTR, qtdProfessoresPTR);
                 printf("Voce entrou em 'Disciplinas'");
                 break;
 
@@ -120,11 +133,14 @@ int opcoesMenu(){
 
 }
 
-int menuAlunos(Aluno alunoLista[], Professor professorLista[], int qtdAlunos, int qtdProfessores){
+int menuAlunos(Aluno alunoLista[], Professor professorLista[], int *qtdAlunosPTR, int *qtdProfessoresPTR){
 
     int escolhaSubMenu, tipoItem = 0, tipoCadastro = 0, sair = 0;
 
     while(!sair){
+
+    printf("qtdALunos MenuAlunos---> %d\n\n", *qtdAlunosPTR);
+
     escolhaSubMenu = switchPessoaDisciplina(tipoItem);
 
         switch(escolhaSubMenu){
@@ -136,13 +152,21 @@ int menuAlunos(Aluno alunoLista[], Professor professorLista[], int qtdAlunos, in
 
         case 1:
             system("clear");
-            printf("Você entrou em cadastro de alunos");
-            cadastrarPessoa(alunoLista, professorLista, qtdAlunos, qtdProfessores, tipoCadastro);
+
+            if(*qtdAlunosPTR == CADASTRO_ALUNO_TAM){
+                printf("Acabaram as vagas para esse ano - Não é possível cadastrar nenhum aluno\n");
+                break;
+            } else {
+                printf("Você entrou em cadastro de alunos");
+                cadastrarPessoa(alunoLista, professorLista, qtdAlunosPTR, qtdProfessoresPTR, tipoCadastro);
+                *qtdAlunosPTR += 1;
+            }
             break;
 
         case 2:
             system("clear");
-            printf("Você entrou em atualizar alunos");
+            printf("Você entrou em exibir -atualizar- alunos");
+            exibirAlunos(alunoLista, qtdAlunosPTR);
             //atualizarPessoa();
             break;
 
@@ -160,7 +184,7 @@ int menuAlunos(Aluno alunoLista[], Professor professorLista[], int qtdAlunos, in
     }
 }
 
-int menuProfessores(Aluno alunoLista[], Professor professorLista[], int qtdAlunos, int qtdProfessores){
+int menuProfessores(Aluno alunoLista[], Professor professorLista[], int *qtdAlunosPTR, int *qtdProfessoresPTR){
 
     int escolhaSubMenu, tipoItem = 1, tipoCadastro = 1, sair = 0;
 
@@ -176,13 +200,24 @@ int menuProfessores(Aluno alunoLista[], Professor professorLista[], int qtdAluno
 
         case 1:
             system("clear");
-            cadastrarPessoa(alunoLista, professorLista, qtdAlunos, qtdProfessores, tipoCadastro);
+
+            if(*qtdProfessoresPTR == CADASTRO_PROFESSOR_TAM){
+                printf("Acabaram as vagas para professores neste ano - Não é possível cadastrar nenhum prof\n");
+                break;
+            } else {
+                printf("Você entrou em cadastro de professores");
+                cadastrarPessoa(alunoLista, professorLista, qtdAlunosPTR, qtdProfessoresPTR, tipoCadastro);
+                *qtdProfessoresPTR += 1;
+            }
+
+
             break;
 
         case 2:
             system("clear");
-            printf("Você entrou em atualizar alunos");
+            printf("Você entrou em exibir professor");
             //atualizarPessoa();
+            exibirProfessor(professorLista, qtdProfessoresPTR);
             break;
 
         case 3:
@@ -199,7 +234,7 @@ int menuProfessores(Aluno alunoLista[], Professor professorLista[], int qtdAluno
     }
 }
 
-int menuDisciplinas(Disciplina disciplinaLista[], Aluno alunoLista[], Professor professorLista[], int qtdDisciplinas, int qtdAlunos, int qtdProfessores){
+int menuDisciplinas(Disciplina disciplinaLista[], Aluno alunoLista[], Professor professorLista[], int *qtdDisciplinasPTR, int *qtdAlunosPTR, int *qtdProfessoresPTR){
 
     int escolhaSubMenu, tipoItem = 2, sair = 0;
 
@@ -216,7 +251,7 @@ int menuDisciplinas(Disciplina disciplinaLista[], Aluno alunoLista[], Professor 
         case 1:
             system("clear");
             printf("Você entrou em cadastro de disciplina");
-            cadastrarDisciplina(disciplinaLista, professorLista, qtdProfessores, qtdDisciplinas);
+            cadastrarDisciplina(disciplinaLista, professorLista, qtdProfessoresPTR, qtdDisciplinasPTR);
             break;
 
         case 2:
@@ -285,13 +320,13 @@ int switchPessoaDisciplina(int tipoItem){
     return 0;
 }
 
-void cadastrarPessoa(Aluno alunoLista[], Professor professorLista[], int qtdAlunos, int qtdProfessores, int tipoCadastro){
+void cadastrarPessoa(Aluno alunoLista[], Professor professorLista[], int *qtdAlunosPTR, int *qtdProfessoresPTR, int tipoCadastro){
 
     //Tipo 0 - Aluno | 1 - Professor
 
     if(tipoCadastro == 0){
 
-        if(qtdAlunos == 0){
+        if(*qtdAlunosPTR == 0){
             for(int i=0; i<CADASTRO_ALUNO_TAM; i++){
                 alunoLista[i].matricula = -1;
             }
@@ -299,32 +334,30 @@ void cadastrarPessoa(Aluno alunoLista[], Professor professorLista[], int qtdAlun
 
         printf(" \ --- Cadastro de Aluno --- /\n\n");
 
-        printf("Insira a matrícula: ");
-        scanf("%d", &alunoLista[qtdAlunos].matricula);
+        alunoLista[*qtdAlunosPTR].matricula = *qtdAlunosPTR + 1;
         getchar();
 
         printf("Insira o nome: ");
         fflush(stdin);
-        fgets(alunoLista[qtdAlunos].nome, 50, stdin);
+        fgets(alunoLista[*qtdAlunosPTR].nome, 50, stdin);
 
         printf("Insira o sexo: (1: Mulher | 2: Homem) ");
-        scanf("%d", &alunoLista[qtdAlunos].sexo);
+        scanf("%d", &alunoLista[*qtdAlunosPTR].sexo);
         getchar();
 
         printf("Insira a data de nascimento: (Formato: DD/MM/AAAA) ");
         fflush(stdin);
-        fgets(alunoLista[qtdAlunos].dataNascimento, 12, stdin);
+        fgets(alunoLista[*qtdAlunosPTR].dataNascimento, 12, stdin);
 
         printf("Insira o cpf: (Formato: XXXXXXXXXXX) ");
         fflush(stdin);
-        fgets(alunoLista[qtdAlunos].cpf, 13, stdin);
+        fgets(alunoLista[*qtdAlunosPTR].cpf, 13, stdin);
 
         system("clear");
 
-        //INSERIR VALIDAÇÃO DOS DADOS!
     } else {
 
-        if(qtdProfessores == 0){
+        if(*qtdProfessoresPTR == 0){
             for(int i=0; i<CADASTRO_PROFESSOR_TAM; i++){
                 professorLista[i].matricula = -1;
             }
@@ -332,34 +365,35 @@ void cadastrarPessoa(Aluno alunoLista[], Professor professorLista[], int qtdAlun
 
         printf(" \ --- Cadastro de Professor --- /\n\n");
 
-        printf("Insira a matrícula: ");
-        scanf("%d", &professorLista[qtdProfessores].matricula);
+        professorLista[*qtdProfessoresPTR].matricula = *qtdProfessoresPTR + 1;
         getchar();
 
-        printf("Insira o nome: ");
+        printf("Insira o nome do professor(a): ");
         fflush(stdin);
-        fgets(professorLista[qtdProfessores].nome, 50, stdin);
+        fgets(professorLista[*qtdProfessoresPTR].nome, 50, stdin);
 
         printf("Insira o sexo: (1: Mulher | 2: Homem) ");
-        scanf("%d", &professorLista[qtdProfessores].sexo);
+        scanf("%d", &professorLista[*qtdProfessoresPTR].sexo);
         getchar();
 
         printf("Insira a data de nascimento: (Formato: DD/MM/AAAA) ");
         fflush(stdin);
-        fgets(professorLista[qtdProfessores].dataNascimento, 12, stdin);
+        fgets(professorLista[*qtdProfessoresPTR].dataNascimento, 12, stdin);
 
         printf("Insira o cpf: (Formato: XXXXXXXXXXX) ");
         fflush(stdin);
-        fgets(professorLista[qtdProfessores].cpf, 13, stdin);
+        fgets(professorLista[*qtdProfessoresPTR].cpf, 13, stdin);
 
         system("clear");
 
     }
 }
 
-void cadastrarDisciplina(Disciplina disciplinaLista[], Professor professorLista[], int qtdProfessores, int qtdDisciplinas){
+void cadastrarDisciplina(Disciplina disciplinaLista[], Professor professorLista[], int *qtdProfessoresPTR, int *qtdDisciplinasPTR){
 
-        if(qtdDisciplinas == 0){
+    int matriculaProfessor, matriculaStatus = 0;
+
+        if(*qtdDisciplinasPTR == 0){
             for(int i=0; i<QUANTIDADE_DISCIPLINAS; i++){
                 disciplinaLista[i].codigo = -1;
             }
@@ -367,20 +401,64 @@ void cadastrarDisciplina(Disciplina disciplinaLista[], Professor professorLista[
 
         printf(" \ --- Cadastro de Disciplina --- /\n\n");
 
+        disciplinaLista[*qtdDisciplinasPTR].codigo = *qtdDisciplinasPTR + 1;
+        getchar();
 
         printf("Insira o nome: ");
         fflush(stdin);
-        fgets(disciplinaLista[qtdDisciplinas].nome, 50, stdin);
+        fgets(disciplinaLista[*qtdDisciplinasPTR].nome, 50, stdin);
 
         printf("Insira o semestre ");
-        scanf("%d", &disciplinaLista[qtdDisciplinas].semestre);
+        scanf("%d", &disciplinaLista[*qtdDisciplinasPTR].semestre);
         getchar();
 
-        /*printf("Insira a matrícula do professor: ");
-        fflush(stdin);
-        fgets(disciplinaLista[qtdDisciplinas].professor, 12, stdin);*/
+        printf("Insira a matrícula do professor: ");
+        scanf("%d", &matriculaProfessor);
+        getchar();
+
+        for(int i=0; i<*qtdProfessoresPTR; i++){
+            if(matriculaProfessor == professorLista[i].matricula){
+                matriculaStatus = 1;
+            }
+        }
+
+        if(matriculaStatus == 1){
+            disciplinaLista[*qtdDisciplinasPTR].matriculaProfessor = matriculaProfessor;
+            getchar();
+        } else {
+            printf("Professor nao cadastrado");
+            return;
+        }
 
 
         system("clear");
 
+}
+
+void exibirAlunos(Aluno alunoLista[], int *qtdAlunosPTR){
+
+    printf("qtd alunos: %d\n\n", *qtdAlunosPTR);
+
+    for(int i=0; i<CADASTRO_ALUNO_TAM; i++){
+        printf("matricula: %d", alunoLista[i].matricula);
+        printf("Nome: %s", alunoLista[i].nome);
+        printf("Sexo: %d", alunoLista[i].sexo);
+        printf("Data: $s", alunoLista[i].dataNascimento);
+        printf("CPF: %s", alunoLista[i].cpf);
+        printf("\n\n");
+    }
+}
+
+void exibirProfessor(Professor professorLista[], int *qtdProfessoresPTR){
+
+    printf("qtd alunos: %d\n\n", *qtdProfessoresPTR);
+
+    for(int i=0; i<CADASTRO_PROFESSOR_TAM; i++){
+        printf("matricula: %d", professorLista[i].matricula);
+        printf("Nome: %s", professorLista[i].nome);
+        printf("Sexo: %d", professorLista[i].sexo);
+        printf("Data: $s", professorLista[i].dataNascimento);
+        printf("CPF: %s", professorLista[i].cpf);
+        printf("\n\n");
+    }
 }
