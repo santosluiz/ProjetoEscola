@@ -42,6 +42,7 @@ void cadastrarPessoa(Aluno alunoLista[], Professor professorLista[], int *qtdAlu
 void cadastrarDisciplina(Disciplina disciplinaLista[], Professor professorLista[], int *qtdProfessoresPTR, int *qtdDisciplinasPTR);
 void atualizarPessoa(Aluno alunoLista[], Professor professorLista[], int *qtdAlunosPTR, int *qtdProfessoresPTR, int tipoCadastro);
 void atualizarDisciplina(Disciplina disciplinaLista[], Professor professorLista[], int *qtdProfessoresPTR, int *qtdDisciplinasPTR);
+void excluirPessoa(Aluno alunoLista[], Professor professorLista[], int *qtdAlunosPTR, int *qtdProfessoresPTR, int tipoCadastro);
 void exibirAlunos(Aluno alunoLista[], Professor professorLista[], int *qtdAlunosPTR, int *qtdProfessoresPTR);
 void exibirProfessor(Aluno alunoLista[], Professor professorLista[], int *qtdAlunosPTR, int *qtdProfessoresPTR);
 void exibirDisciplina(Disciplina disciplinaLista[], int *qtdDisciplinasPTR);
@@ -94,7 +95,6 @@ int main()
             case 2:
                 system("clear");
                 menuProfessores(alunoLista, professorLista, qtdAlunosPTR, qtdProfessoresPTR);
-                qtdProfessores++;
                 break;
 
             case 3:
@@ -175,7 +175,7 @@ int menuAlunos(Aluno alunoLista[], Professor professorLista[], int *qtdAlunosPTR
         case 3:
             system("clear");
             printf("Você entrou em  exclurir alunos");
-            //excluirPessoa();
+            excluirPessoa(alunoLista, professorLista, qtdAlunosPTR, qtdProfessoresPTR,  tipoCadastro);
             break;
 
         default:
@@ -211,8 +211,6 @@ int menuProfessores(Aluno alunoLista[], Professor professorLista[], int *qtdAlun
                 cadastrarPessoa(alunoLista, professorLista, qtdAlunosPTR, qtdProfessoresPTR, tipoCadastro);
                 *qtdProfessoresPTR += 1;
             }
-
-
             break;
 
         case 2:
@@ -223,8 +221,8 @@ int menuProfessores(Aluno alunoLista[], Professor professorLista[], int *qtdAlun
 
         case 3:
             system("clear");
-            printf("Você entrou em -excluir professor");
-            //excluirPessoa();
+            printf("Você entrou em excluir professor");
+            excluirPessoa(alunoLista, professorLista, qtdAlunosPTR, qtdProfessoresPTR,  tipoCadastro);
             break;
 
         default:
@@ -288,6 +286,7 @@ int menuRelatorios(Disciplina disciplinaLista[], Aluno alunoLista[], Professor p
     int escolhaSubMenu, tipoItem = 3, sair = 0;
 
     while(!sair){
+
     escolhaSubMenu = switchPessoaDisciplina(tipoItem);
 
         switch(escolhaSubMenu){
@@ -401,8 +400,6 @@ int switchPessoaDisciplina(int tipoItem){
         printf("5 - Excluir Aluno da disciplina\n");
         printf("0 - Sair\n");
 
-        -homem
-        -mulher, mulher
 
         scanf("%d", &escolhaItemMenu);
 
@@ -560,7 +557,7 @@ void atualizarPessoa(Aluno alunoLista[], Professor professorLista[], int *qtdAlu
 
         printf("Lista de alunos:\n");
         for(int i=0; i<*qtdAlunosPTR; i++){
-            printf("Nome: %s", alunoLista[i].nome);
+            printf("Nome: %s\n", alunoLista[i].nome);
             printf("Matricula: %d\n\n", alunoLista[i].matricula);
         }
 
@@ -689,6 +686,82 @@ void atualizarDisciplina(Disciplina disciplinaLista[], Professor professorLista[
         }
 }
 
+void excluirPessoa(Aluno alunoLista[], Professor professorLista[], int *qtdAlunosPTR, int *qtdProfessoresPTR, int tipoCadastro){
+
+    int matriculaPessoa, statusMatriculaPessoa = 0;
+
+    if(tipoCadastro == 0){
+        printf(" \ --- Excluir Aluno --- /\n\n");
+
+        printf("Lista de alunos:\n");
+        for(int i=0; i<*qtdAlunosPTR; i++){
+            printf("Nome: %s\n", alunoLista[i].nome);
+            printf("Matricula: %d\n\n", alunoLista[i].matricula);
+        }
+
+        printf("Insira a matricula do aluno a ser excluido: ");
+        scanf("%d", &matriculaPessoa);
+        getchar();
+
+        for(int i=0; i<*qtdAlunosPTR; i++){
+            if(matriculaPessoa == alunoLista[i].matricula){
+                //Zera a matricula do usuario
+                alunoLista[i].matricula = -1;
+                statusMatriculaPessoa = 1;
+            }
+        }
+
+        if(statusMatriculaPessoa == 1){
+            //Coloca aluno exculido para o final da lista
+            for(int i=matriculaPessoa - 1; i<*qtdAlunosPTR - 1; i++){
+                alunoLista[i] = alunoLista[i + 1];
+            }
+            *qtdAlunosPTR -= 1;
+        } else {
+            printf("Aluno nao encontrado.");
+            return;
+        }
+    }
+    else {
+        printf(" \ --- Excluir Professor --- /\n\n");
+
+        printf("Lista de professores:\n");
+        for(int i=0; i<*qtdProfessoresPTR; i++){
+            printf("Nome: %s\n", professorLista[i].nome);
+            printf("Matricula: %d", professorLista[i].matricula);
+            printf("\n\n");
+        }
+
+        printf("Insira a matricula do professor a ser excluido: ");
+        scanf("%d", &matriculaPessoa);
+        getchar();
+
+        for(int i=0; i<*qtdProfessoresPTR; i++){
+            if(matriculaPessoa == professorLista[i].matricula){
+                //Zera a matricula do usuario
+                professorLista[i].matricula = -1;
+                statusMatriculaPessoa = 1;
+            }
+        }
+
+        printf("\n\n - qtd professores: %d", *qtdProfessoresPTR);
+
+        if(statusMatriculaPessoa == 1){
+            //Coloca professor exculido para o final da lista
+            printf("entrou");
+            for(int i=matriculaPessoa - 1; i<*qtdProfessoresPTR - 1; i++){
+                professorLista[i] = professorLista[i + 1];
+            }
+            *qtdProfessoresPTR -= 1;
+        } else {
+            printf("Professor nao encontrado.");
+            return;
+        }
+
+        printf("\n\n - qtd professores: %d", *qtdProfessoresPTR);
+    }
+}
+
 /* RELATÓRIOS */
 
 void exibirAlunos(Aluno alunoLista[], Professor professorLista[], int *qtdAlunosPTR, int *qtdProfessoresPTR){
@@ -762,17 +835,17 @@ void exibirPorSexo(Aluno alunoLista[], Professor professorLista[], int *qtdAluno
 void textoListagemAlunosOuProfessores(Aluno alunoLista[], Professor professorLista[], int i, int tipoCadastro){
 
     if(tipoCadastro == 0){
-        printf("Matricula: %d", alunoLista[i].matricula);
-        printf("Nome: %s", alunoLista[i].nome);
-        printf("Sexo: %d", alunoLista[i].sexo);
-        printf("Data: $s", alunoLista[i].dataNascimento);
-        printf("CPF: %s", alunoLista[i].cpf);
+        printf("Matricula: %d \n", alunoLista[i].matricula);
+        printf("Nome: %s \n", alunoLista[i].nome);
+        printf("Sexo: %d \n", alunoLista[i].sexo);
+        printf("Data: %s \n", alunoLista[i].dataNascimento);
+        printf("CPF: %s \n", alunoLista[i].cpf);
     } else {
-        printf("Matricula: %d\n", professorLista[i].matricula);
+        printf("Matricula: %d \n", professorLista[i].matricula);
         printf("Nome: %s \n", professorLista[i].nome);
-        printf("Sexo: %d\n", professorLista[i].sexo);
-        printf("Data: $s \n", professorLista[i].dataNascimento);
-        printf("CPF: %s\n", professorLista[i].cpf);
+        printf("Sexo: %d \n", professorLista[i].sexo);
+        printf("Data: %s \n", professorLista[i].dataNascimento);
+        printf("CPF: %s \n", professorLista[i].cpf);
     }
     printf("\n\n");
 }
