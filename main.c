@@ -35,7 +35,7 @@ typedef struct disciplinaDados{
 int opcoesMenu();
 int menuAlunos(Aluno alunoLista[], Professor professorLista[], int *qtdAlunosPTR, int *qtdProfessoresPTR);
 int menuProfessores(Aluno alunoLista[], Professor professorLista[], int *qtdAlunosPTR, int *qtdProfessoresPTR);
-int menuDisciplinas(Disciplina disciplinaLista[], Aluno alunoLista[], Professor professorLista[], int *qtdDisciplinasPTR, int *qtdAlunosPTR, int *qtdProfessoresPTR);
+int menuDisciplinas(Disciplina disciplinaLista[], Aluno alunoLista[], Professor professorLista[], int *qtdDisciplinasPTR, int *qtdAlunosPTR, int *qtdProfessoresPTR, int *qtdAlunoDisciplinaPTR);
 int menuRelatorios(Disciplina disciplinaLista[], Aluno alunoLista[], Professor professorLista[], int *qtdDisciplinasPTR, int *qtdAlunosPTR, int *qtdProfessoresPTR);
 int switchPessoaDisciplina(int tipoItem);
 void cadastrarPessoa(Aluno alunoLista[], Professor professorLista[], int *qtdAlunosPTR, int *qtdProfessoresPTR, int tipoCadastro);
@@ -44,6 +44,9 @@ void atualizarPessoa(Aluno alunoLista[], Professor professorLista[], int *qtdAlu
 void atualizarDisciplina(Disciplina disciplinaLista[], Professor professorLista[], int *qtdProfessoresPTR, int *qtdDisciplinasPTR);
 void excluirPessoa(Aluno alunoLista[], Professor professorLista[], int *qtdAlunosPTR, int *qtdProfessoresPTR, int tipoCadastro);
 void excluirDisciplina(Disciplina disciplinaLista[], int *qtdDisciplinasPTR);
+void incluirAlunoNaDisciplina(Disciplina disciplinaLista[], Aluno alunoLista[], int *qtdDisciplinasPTR, int *qtdAlunosPTR, int *qtdAlunoDisciplinaPTR);
+void excluirAlunoDaDisciplina(Disciplina disciplinaLista[], Aluno alunoLista[], int *qtdDisciplinasPTR, int *qtdAlunosPTR, int *qtdAlunoDisciplinaPTR);
+
 void exibirAlunos(Aluno alunoLista[], Professor professorLista[], int *qtdAlunosPTR, int *qtdProfessoresPTR);
 void exibirProfessor(Aluno alunoLista[], Professor professorLista[], int *qtdAlunosPTR, int *qtdProfessoresPTR);
 void exibirDisciplina(Disciplina disciplinaLista[], int *qtdDisciplinasPTR);
@@ -64,15 +67,18 @@ int main()
     int qtdAlunos = 0;
     int qtdProfessores = 0;
     int qtdDisciplinas = 0;
+    int qtdAlunosDisciplina = 0;
 
     int *qtdAlunosPTR;
     int *qtdProfessoresPTR;
     int *qtdDisciplinasPTR;
+    int *qtdAlunoDisciplinaPTR;
 
 
     qtdAlunosPTR = &qtdAlunos;
     qtdProfessoresPTR = &qtdProfessores;
     qtdDisciplinasPTR = &qtdDisciplinas;
+    qtdAlunoDisciplinaPTR = &qtdAlunosDisciplina;
 
 
     while(!sair){
@@ -100,7 +106,7 @@ int main()
 
             case 3:
                 system("clear");
-                menuDisciplinas(disciplinaLista, alunoLista, professorLista, qtdDisciplinasPTR, qtdAlunosPTR, qtdProfessoresPTR);
+                menuDisciplinas(disciplinaLista, alunoLista, professorLista, qtdDisciplinasPTR, qtdAlunosPTR, qtdProfessoresPTR, qtdAlunoDisciplinaPTR);
                 printf("Voce entrou em 'Disciplinas'");
                 break;
 
@@ -232,7 +238,7 @@ int menuProfessores(Aluno alunoLista[], Professor professorLista[], int *qtdAlun
     }
 }
 
-int menuDisciplinas(Disciplina disciplinaLista[], Aluno alunoLista[], Professor professorLista[], int *qtdDisciplinasPTR, int *qtdAlunosPTR, int *qtdProfessoresPTR){
+int menuDisciplinas(Disciplina disciplinaLista[], Aluno alunoLista[], Professor professorLista[], int *qtdDisciplinasPTR, int *qtdAlunosPTR, int *qtdProfessoresPTR, int *qtdAlunoDisciplinaPTR){
 
     int escolhaSubMenu, tipoItem = 2, sair = 0;
 
@@ -269,6 +275,18 @@ int menuDisciplinas(Disciplina disciplinaLista[], Aluno alunoLista[], Professor 
             system("clear");
             printf("Você entrou em excluir disciplina");
             excluirDisciplina(disciplinaLista, qtdDisciplinasPTR);
+            break;
+
+        case 4:
+            system("clear");
+            printf("Você entrou em incluir aluno na disciplina");
+            incluirAlunoNaDisciplina(disciplinaLista, alunoLista, qtdDisciplinasPTR, qtdAlunosPTR, qtdAlunoDisciplinaPTR);
+            break;
+
+        case 5:
+            system("clear");
+            printf("Você entrou em excluir aluno da disciplina");
+            excluirAlunoDaDisciplina(disciplinaLista, alunoLista, qtdDisciplinasPTR, qtdAlunosPTR, qtdAlunoDisciplinaPTR);
             break;
 
         default:
@@ -792,6 +810,82 @@ void excluirDisciplina(Disciplina disciplinaLista[], int *qtdDisciplinasPTR){
         return;
     }
 
+}
+
+void incluirAlunoNaDisciplina(Disciplina disciplinaLista[], Aluno alunoLista[], int *qtdDisciplinasPTR, int *qtdAlunosPTR, int *qtdAlunoDisciplinaPTR){
+
+    int codigoDisciplina, matriculaAluno, statusCodigoDisciplina = 0, statusMatriculaAluno = 0;
+
+    printf(" \ --- Incluir Aluno da Disciplina --- /\n\n");
+
+    printf("Lista de disciplinas:\n");
+    for(int i=0; i<*qtdDisciplinasPTR; i++){
+        printf("Disciplina: %s\n", disciplinaLista[i].nome);
+        printf("Codigo: %d\n\n", disciplinaLista[i].codigo);
+    }
+
+    printf("Insira o codigo da disciplina: ");
+    scanf("%d", &codigoDisciplina);
+
+    for(int i=0; i<*qtdDisciplinasPTR; i++){
+        if(codigoDisciplina == disciplinaLista[i].codigo){
+            statusCodigoDisciplina = 1;
+            system("clear");
+
+            printf("Lista de alunos:\n");
+            for(int i=0; i<*qtdDisciplinasPTR; i++){
+                printf("Nome: %s", alunoLista[i].nome);
+                printf("Matricula: %d", alunoLista[i].matricula);
+                printf("\n\n");
+            }
+
+            printf("Insira a matricula do aluno: ");
+            scanf("%d", &matriculaAluno);
+
+            if(statusMatriculaAluno == 0){
+                for(int j=0; j<*qtdAlunosPTR; j++){
+                    if(matriculaAluno == alunoLista[j].matricula){
+                        statusMatriculaAluno = 1;
+                        disciplinaLista[i].alunosNaDisciplina[*qtdAlunoDisciplinaPTR] = matriculaAluno;
+                        *qtdAlunoDisciplinaPTR += 1;
+                    }
+                }
+            }
+
+        }
+    }
+
+    if(statusCodigoDisciplina == 0){
+        printf("-> Disciplina nao encontrada <-\n");
+        return;
+    }
+
+    if(statusMatriculaAluno == 0){
+        printf("-> Aluno nao encontrado <-\n");
+        return;
+    }
+
+
+
+    for(int i=0; i<*qtdDisciplinasPTR; i++){
+        printf("Disciplina: %s", disciplinaLista[i].nome);
+        printf("Codigo: %d\n", disciplinaLista[i].codigo);
+        printf("Semestre: %d\n", disciplinaLista[i].semestre);
+        printf("Matricula Professor: %d\n", disciplinaLista[i].matriculaProfessor);
+        for(int j=0; j<*qtdAlunoDisciplinaPTR; j++){
+
+            //VERIFICAR SE O ALUNOSNADISCIPLINA EXISTE!
+            //if(disciplinaLista[i].alunosNaDisciplina[j] >= 1)
+
+            printf("-- Codigo aluno: %d\n", disciplinaLista[i].alunosNaDisciplina[j]);
+        }
+    }
+
+
+
+}
+
+void excluirAlunoDaDisciplina(Disciplina disciplinaLista[], Aluno alunoLista[], int *qtdDisciplinasPTR, int *qtdAlunosPTR, int *qtdAlunoDisciplinaPTR){
 }
 
 /* RELATÓRIOS */
