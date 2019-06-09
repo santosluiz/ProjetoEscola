@@ -25,8 +25,8 @@ typedef struct professorDados{
 
 /* Struct Disciplina */
 typedef struct disciplinaDados{
-    char nome[50];
     int codigo;
+    char nome[50];
     int semestre;
     int matriculaProfessor;
     int alunosNaDisciplina[ALUNOS_POR_DISCIPLINA];
@@ -103,7 +103,7 @@ int main()
 
             case 4:
                 system("clear");
-                //menuRelatorios(alunoLista, professorLista, qtdAlunos, qtdProfessores);
+                menuRelatorios(disciplinaLista, alunoLista, professorLista, qtdDisciplinasPTR, qtdAlunosPTR, qtdProfessoresPTR);
                 break;
 
             default:
@@ -215,13 +215,13 @@ int menuProfessores(Aluno alunoLista[], Professor professorLista[], int *qtdAlun
         case 2:
             system("clear");
             printf("Você entrou em exibir professor");
-            //atualizarPessoa();
-            exibirProfessor(professorLista, qtdProfessoresPTR);
+            atualizarPessoa(alunoLista, professorLista, qtdAlunosPTR, qtdProfessoresPTR, tipoCadastro);
             break;
 
         case 3:
             system("clear");
-            printf("Você entrou em exclurir alunos");
+            printf("Você entrou em -exibir-exclurir alunos");
+            exibirProfessor(professorLista, qtdProfessoresPTR);
             //excluirPessoa();
             break;
 
@@ -281,6 +281,80 @@ int menuDisciplinas(Disciplina disciplinaLista[], Aluno alunoLista[], Professor 
     }
 }
 
+int menuRelatorios(Disciplina disciplinaLista[], Aluno alunoLista[], Professor professorLista[], int *qtdDisciplinasPTR, int *qtdAlunosPTR, int *qtdProfessoresPTR){
+
+    int escolhaSubMenu, tipoItem = 3, sair = 0;
+
+    while(!sair){
+    escolhaSubMenu = switchPessoaDisciplina(tipoItem);
+
+        switch(escolhaSubMenu){
+           case 0:
+            system("clear");
+            printf("Você saiu do sistema");
+            sair = 1;
+            break;
+
+        case 1:
+            system("clear");
+            exibirAlunos(alunoLista, qtdAlunosPTR);
+            break;
+
+        case 2:
+            system("clear");
+            exibirProfessor(professorLista, qtdProfessoresPTR);
+            break;
+
+        case 3:
+            system("clear");
+            exibirDisciplina(disciplinaLista, qtdDisciplinasPTR);
+            break;
+
+        case 4:
+            system("clear");
+            break;
+
+        case 5:
+            system("clear");
+            break;
+
+        case 6:
+            system("clear");
+            break;
+
+        case 7:
+            system("clear");
+            break;
+
+        case 8:
+            system("clear");
+            break;
+
+        case 9:
+            system("clear");
+            break;
+
+        case 10:
+            system("clear");
+            break;
+
+        case 11:
+            system("clear");
+            break;
+
+        case 12:
+            system("clear");
+            break;
+
+
+        default:
+            system("clear");
+            printf("Opcao invalida");
+            break;
+        }
+    }
+}
+
 int switchPessoaDisciplina(int tipoItem){
     int escolhaItemMenu;
 
@@ -324,6 +398,20 @@ int switchPessoaDisciplina(int tipoItem){
         scanf("%d", &escolhaItemMenu);
 
         return escolhaItemMenu;
+    } else if(tipoItem == 3){
+        printf("\ ---- RELATÓRIOS ---- /\n\n");
+        printf("1 - Listar Alunos\n");
+        printf("2 - Listar Professores\n");
+        printf("3 - Listar Disciplinas\n");
+        printf("4 - Listar Disciplinas + Alunos Cadastrados\n");
+        printf("5 - Listar Alunos por Sexo\n");
+        printf("6 - Listar Alunos Ordenados por Nome\n");
+        printf("7 - Listar Alunos Ordenados por Data de Nascimento\n");
+        printf("8 - Listar Professores por Sexo\n");
+        printf("9 - Listar Professores Ordenados por Nome\n");
+        printf("10 - Listar Professores Ordenados por Data de Nascimento\n");
+        printf("11 - Listar Aniversariantes do Mes\n");
+        printf("12 - Buscar Pessoa (Professor/Aluno)\n");
     }
 
     return 0;
@@ -603,10 +691,10 @@ void exibirProfessor(Professor professorLista[], int *qtdProfessoresPTR){
     printf("qtd alunos: %d\n\n", *qtdProfessoresPTR);
 
     for(int i=0; i<*qtdProfessoresPTR; i++){
-        printf("matricula: %d\n", professorLista[i].matricula);
-        printf("Nome: %s\n", professorLista[i].nome);
+        printf("Matricula: %d\n", professorLista[i].matricula);
+        printf("Nome: %s \n", professorLista[i].nome);
         printf("Sexo: %d\n", professorLista[i].sexo);
-        printf("Data: $s\n", professorLista[i].dataNascimento);
+        printf("Data: $s \n", professorLista[i].dataNascimento);
         printf("CPF: %s\n", professorLista[i].cpf);
         printf("\n\n");
     }
@@ -614,14 +702,13 @@ void exibirProfessor(Professor professorLista[], int *qtdProfessoresPTR){
 
 void exibirDisciplina(Disciplina disciplinaLista[], int *qtdDisciplinasPTR){
 
-    printf("Disciplinas Cadastradas:\n");
+    printf("Disciplinas Cadastradas: %d\n", *qtdDisciplinasPTR);
 
     for(int i=0; i<*qtdDisciplinasPTR; i++){
-        printf("Disciplina: %d\n", disciplinaLista[i].nome);
-        printf("Codigo: %s\n", disciplinaLista[i].codigo);
+        printf("Disciplina: %s\n", disciplinaLista[i].nome);
+        printf("Codigo: %d\n", disciplinaLista[i].codigo);
         printf("Semestre: %d\n", disciplinaLista[i].semestre);
-        printf("Matricula Professor: $s\n", disciplinaLista[i].matriculaProfessor);
-        //printf("Alunos: %s\n", disciplinaLista[i].alunosNaDisciplina[j);
+        printf("Matricula Professor: %d\n", disciplinaLista[i].matriculaProfessor);
         printf("\n\n");
     }
 }
