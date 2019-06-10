@@ -54,6 +54,9 @@ void exibirProfessor(Aluno alunoLista[], Professor professorLista[], int *qtdAlu
 void exibirDisciplina(Disciplina disciplinaLista[], int *qtdDisciplinasPTR, int *qtdAlunoDisciplinaPTR);
 void exibirDisciplinaEspecifica(Disciplina disciplinaLista[], Aluno alunoLista[], int *qtdDisciplinasPTR, int *qtdAlunoDisciplinaPTR, int *qtdAlunosPTR);
 void exibirPorSexo(Aluno alunoLista[], Professor professorLista[], int *qtdAlunosPTR, int *qtdProfessoresPTR, int tipoCadastro);
+
+void exibirPessoaPorOrdemAlfabetica(Aluno alunoLista[], Professor professorLista[], int *qtdAlunosPTR, int *qtdProfessoresPTR, int tipoCadastro);
+
 void textoListagemAlunosOuProfessores(Aluno alunoLista[], Professor professorLista[], int i, int tipoCadastro);
 
 int main()
@@ -333,6 +336,7 @@ int menuRelatorios(Disciplina disciplinaLista[], Aluno alunoLista[], Professor p
 
         case 6:
             system("clear");
+            exibirPessoaPorOrdemAlfabetica(alunoLista, professorLista, qtdAlunosPTR, qtdProfessoresPTR, 0);
             break;
 
         case 7:
@@ -347,6 +351,7 @@ int menuRelatorios(Disciplina disciplinaLista[], Aluno alunoLista[], Professor p
 
         case 9:
             system("clear");
+            exibirPessoaPorOrdemAlfabetica(alunoLista, professorLista, qtdAlunosPTR, qtdProfessoresPTR, 1);
             break;
 
         case 10:
@@ -999,7 +1004,6 @@ void exibirDisciplinaEspecifica(Disciplina disciplinaLista[], Aluno alunoLista[]
 
 }
 
-
 void exibirPorSexo(Aluno alunoLista[], Professor professorLista[], int *qtdAlunosPTR, int *qtdProfessoresPTR, int tipoCadastro){
 
     int tipoSexo;
@@ -1031,6 +1035,59 @@ void exibirPorSexo(Aluno alunoLista[], Professor professorLista[], int *qtdAluno
 
         }
     }
+}
+
+void exibirPessoaPorOrdemAlfabetica(Aluno alunoLista[], Professor professorLista[], int *qtdAlunosPTR, int *qtdProfessoresPTR, int tipoCadastro){
+
+	int j, i, aux[300];
+
+	if(tipoCadastro == 0){
+
+        Aluno alunoListaCopia[CADASTRO_ALUNO_TAM];
+
+        for(int l=0; l<*qtdAlunosPTR; l++){
+            alunoListaCopia[l] = alunoLista[l];
+        }
+
+        for(j=0; j<*qtdAlunosPTR; j++){
+            strcpy(aux,alunoListaCopia[j].nome);
+            i = j-1;
+
+            while(i >= 0 && strcmp(alunoListaCopia[i].nome, aux) > 0){
+                strcpy(alunoListaCopia[i+1].nome,alunoListaCopia[i].nome);
+                i--;
+            }
+
+            strcpy(alunoListaCopia[i+1].nome,aux);
+        }
+
+        for(int z=0; z<*qtdAlunosPTR; z++){
+            printf("Nome do Aluno: %s", alunoListaCopia[z].nome);
+        }
+    } else {
+        Professor professorListaCopia[CADASTRO_PROFESSOR_TAM];
+
+        for(int l=0; l<*qtdProfessoresPTR; l++){
+            professorListaCopia[l] = professorLista[l];
+        }
+
+        for(j=0; j<*qtdProfessoresPTR; j++){
+            strcpy(aux,professorListaCopia[j].nome);
+            i = j-1;
+
+            while(i >= 0 && strcmp(professorListaCopia[i].nome, aux) > 0){
+                strcpy(professorListaCopia[i+1].nome,professorListaCopia[i].nome);
+                i--;
+            }
+
+            strcpy(professorListaCopia[i+1].nome,aux);
+        }
+
+        for(int z=0; z<*qtdProfessoresPTR; z++){
+            printf("Nome do Professor: %s", professorListaCopia[z].nome);
+        }
+    }
+
 }
 
 void textoListagemAlunosOuProfessores(Aluno alunoLista[], Professor professorLista[], int i, int tipoCadastro){
